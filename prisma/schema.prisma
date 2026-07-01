@@ -1,0 +1,125 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../lib/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum CardLevel {
+  WARMUP
+  REAL_TALK
+  GO_DEEP
+  CURVEBALL
+}
+
+enum CardPack {
+  MAIN
+  EXPANSION
+  CURVEBALL
+}
+
+enum RoomStatus {
+  WAITING_FOR_PARTNER
+  ACTIVE
+  COMPLETE
+}
+
+enum Partner {
+  A
+  B
+}
+
+enum PoolCardStatus {
+  AVAILABLE
+  DRAWN
+  DISCARDED
+}
+
+model Card {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  theme       String?
+  level       CardLevel
+  pack        CardPack
+  text        String
+  curveballNo Int?
+  createdAt   DateTime  @default(now())
+
+  poolCards  PoolCard[]
+  drawnCards DrawnCard[]
+}
+
+model Room {
+  id               String     @id @default(cuid())
+  code             String     @unique
+  status           RoomStatus @default(WAITING_FOR_PARTNER)
+  currentLevel     CardLevel  @default(WARMUP)
+  timezone         String     @default("UTC")
+  partnerASecret   String?
+  partnerBSecret   String?
+  partnerAJoinedAt DateTime?
+  partnerBJoinedAt DateTime?
+  createdAt        DateTime   @default(now())
+  completedAt      DateTime?
+
+  poolCards    PoolCard[]
+  drawnCards   DrawnCard[]
+  decisionLogs DecisionLog[]
+}
+
+model PoolCard {
+  id        String         @id @default(cuid())
+  roomId    String
+  room      Room           @relation(fields: [roomId], references: [id])
+  cardId    String
+  card      Card           @relation(fields: [cardId], references: [id])
+  pool      CardLevel
+  status    PoolCardStatus @default(AVAILABLE)
+  sortOrder Int
+
+  @@unique([roomId, cardId])
+  @@index([roomId, pool, status, sortOrder])
+}
+
+// One row per (room, playDate, partner, pool) for the *currently active* card.
+// Passing updates cardId in place (see game-logic/pool.ts) rather than inserting
+// a new row, since only one card is ever "live" for a given partner on a given
+// day/pool — the unique constraint below is what makes draws idempotent under
+// concurrent polling from both devices.
+model DrawnCard {
+  id          String    @id @default(cuid())
+  roomId      String
+  room        Room      @relation(fields: [roomId], references: [id])
+  cardId      String
+  card        Card      @relation(fields: [cardId], references: [id])
+  playDate    DateTime  @db.Date
+  partner     Partner
+  pool        CardLevel
+  timesPassed Int       @default(0)
+  answeredAt  DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  decisionLog DecisionLog?
+
+  @@unique([roomId, playDate, partner, pool])
+  @@index([roomId, playDate])
+}
+
+model DecisionLog {
+  id          String    @id @default(cuid())
+  roomId      String
+  room        Room      @relation(fields: [roomId], references: [id])
+  drawnCardId String    @unique
+  drawnCard   DrawnCard @relation(fields: [drawnCardId], references: [id])
+  note        String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([roomId])
+}
