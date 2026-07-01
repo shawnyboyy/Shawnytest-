@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getRoomState, type RoomStateDTO } from "./api";
 
 const POLL_INTERVAL_MS = 5000;
@@ -8,41 +8,28 @@ const POLL_INTERVAL_MS = 5000;
 export function useRoomState(roomCode: string, token: string | null) {
   const [state, setState] = useState<RoomStateDTO | null>(null);
   const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(true);
-  const tokenRef = useRef(token);
-  tokenRef.current = token;
 
   const refresh = useCallback(async () => {
-    const currentToken = tokenRef.current;
-    if (!currentToken) return;
+    if (!token) return;
     try {
-      const next = await getRoomState(roomCode, currentToken);
+      const next = await getRoomState(roomCode, token);
       setState(next);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load room state");
-    } finally {
-      setLoading(false);
     }
-  }, [roomCode]);
+  }, [roomCode, token]);
 
   useEffect(() => {
-    if (!token) {
-      setLoading(false);
-      return;
-    }
+    if (!token) return;
 
-    let cancelled = false;
-    let intervalId: ReturnType<typeof setInterval> | null = null;
-
-    const tick = () => {
-      if (!cancelled && document.visibilityState === "visible") {
-        void refresh();
-      }
-    };
-
+    // Fetch-on-mount-then-poll: the initial call's setState happens after the
+    // fetch's await, not synchronously, so this doesn't cascade-render.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     void refresh();
-    intervalId = setInterval(tick, POLL_INTERVAL_MS);
+    const intervalId = setInterval(() => {
+      if (document.visibilityState === "visible") void refresh();
+    }, POLL_INTERVAL_MS);
 
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible") void refresh();
@@ -50,11 +37,12 @@ export function useRoomState(roomCode: string, token: string | null) {
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-      cancelled = true;
-      if (intervalId) clearInterval(intervalId);
+      clearInterval(intervalId);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [token, refresh]);
+
+  const loading = token !== null && state === null && error === null;
 
   return { state, error, loading, refresh };
 }

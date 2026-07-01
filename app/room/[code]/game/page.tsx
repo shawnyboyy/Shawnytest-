@@ -14,20 +14,17 @@ export default function GamePage() {
   const router = useRouter();
   const roomCode = params.code.toUpperCase();
 
-  const [token, setToken] = useState<string | null>(null);
-  const [partner, setPartner] = useState<"A" | "B" | null>(null);
+  const [storedToken] = useState(() => loadRoomToken(roomCode));
   const [busy, setBusy] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
+  const token = storedToken?.token ?? null;
+  const partner = storedToken?.partner ?? null;
 
   useEffect(() => {
-    const stored = loadRoomToken(roomCode);
-    if (!stored) {
+    if (!storedToken) {
       router.replace(`/room/${roomCode}`);
-      return;
     }
-    setToken(stored.token);
-    setPartner(stored.partner);
-  }, [roomCode, router]);
+  }, [storedToken, roomCode, router]);
 
   const { state, error, loading, refresh } = useRoomState(roomCode, token);
 
