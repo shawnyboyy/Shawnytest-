@@ -30,7 +30,7 @@ export async function POST(
     });
 
     const partnerToken = encodePartnerToken({ roomId: room.id, partner: "B", secret: partnerBSecret });
-    return NextResponse.json({ roomCode: room.code, partnerToken });
+    return NextResponse.json({ roomCode: room.code, partner: "B", partnerToken });
   } catch (err) {
     return toErrorResponse(err);
   }
