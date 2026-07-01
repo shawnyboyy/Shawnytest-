@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { getDayType, getLocalDateString, getPoolForDayType, getWeekdayInTimezone } from "../../lib/game-logic/day-type.js";
+import { getDayType, getLocalDateString, getPoolForDayType, getWeekdayInTimezone } from "../../lib/game-logic/day-type";
 
 // 2024-01-01 was a Monday (UTC), used as the reference week throughout.
 const MON = new Date("2024-01-01T12:00:00.000Z");

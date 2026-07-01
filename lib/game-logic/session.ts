@@ -1,9 +1,9 @@
-import { getDayType, getLocalDateString, getPoolForDayType } from "./day-type.js";
-import { NoPlayTodayError, PoolExhaustedError } from "./errors.js";
-import * as pool from "./pool.js";
-import { advanceLevelIfExhausted, checkGameComplete } from "./progression.js";
-import * as repo from "./repository.js";
-import type { CardLevel, DayType, Partner } from "./types.js";
+import { getDayType, getLocalDateString, getPoolForDayType } from "./day-type";
+import { NoPlayTodayError, PoolExhaustedError } from "./errors";
+import * as pool from "./pool";
+import { advanceLevelIfExhausted, checkGameComplete } from "./progression";
+import * as repo from "./repository";
+import type { CardLevel, DayType, Partner } from "./types";
 
 export function toPlayDate(date: Date, timezone: string): Date {
   return new Date(`${getLocalDateString(date, timezone)}T00:00:00.000Z`);

@@ -1,14 +1,14 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { prisma } from "../../lib/prisma.js";
-import { NoPlayTodayError } from "../../lib/game-logic/errors.js";
+import { prisma } from "../../lib/prisma";
+import { NoPlayTodayError } from "../../lib/game-logic/errors";
 import {
   answerDrawnCard,
   drawTodayCard,
   getTodaysSession,
   passTodayCard,
   toPlayDate,
-} from "../../lib/game-logic/session.js";
-import { createTestRoom, seedTestCards, utcDate } from "../helpers.js";
+} from "../../lib/game-logic/session";
+import { createTestRoom, seedTestCards, utcDate } from "../helpers";
 
 // 2024-01-01 = Monday (THEMED), 2024-01-05 = Friday (CURVEBALL), 2024-01-06 = Saturday (WEEKEND)
 const MONDAY = utcDate("2024-01-01");

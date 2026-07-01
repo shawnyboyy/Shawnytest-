@@ -1,4 +1,4 @@
-import type { CardLevel, DayType } from "./types.js";
+import type { CardLevel, DayType } from "./types";
 
 const WEEKDAY_INDEX: Record<string, number> = {
   Sun: 0,

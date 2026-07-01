@@ -1,6 +1,6 @@
 import "dotenv/config";
-import { prisma } from "../lib/prisma.js";
-import { SEED_CARDS, EXPECTED_COUNTS } from "./data/cards.js";
+import { prisma } from "../lib/prisma";
+import { SEED_CARDS, EXPECTED_COUNTS } from "./data/cards";
 
 function assertSeedDataShape() {
   if (SEED_CARDS.length !== EXPECTED_COUNTS.total) {

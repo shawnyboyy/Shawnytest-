@@ -1,7 +1,7 @@
-import { prisma } from "../prisma.js";
-import { PoolExhaustedError } from "./errors.js";
-import * as repo from "./repository.js";
-import type { CardLevel, Partner } from "./types.js";
+import { prisma } from "../prisma";
+import { PoolExhaustedError } from "./errors";
+import * as repo from "./repository";
+import type { CardLevel, Partner } from "./types";
 
 /** Seeds a brand-new room's pools from the full card catalog. Call once at room creation. */
 export async function seedPoolsForRoom(roomId: string) {

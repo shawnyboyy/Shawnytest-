@@ -1,9 +1,9 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { prisma } from "../../lib/prisma.js";
-import * as pool from "../../lib/game-logic/pool.js";
-import { advanceLevelIfExhausted, checkGameComplete } from "../../lib/game-logic/progression.js";
-import { answerDrawnCard } from "../../lib/game-logic/session.js";
-import { createTestRoom, seedTestCards, utcDate } from "../helpers.js";
+import { prisma } from "../../lib/prisma";
+import * as pool from "../../lib/game-logic/pool";
+import { advanceLevelIfExhausted, checkGameComplete } from "../../lib/game-logic/progression";
+import { answerDrawnCard } from "../../lib/game-logic/session";
+import { createTestRoom, seedTestCards, utcDate } from "../helpers";
 
 const DAY = utcDate("2024-01-01");
 

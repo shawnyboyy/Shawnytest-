@@ -1,8 +1,8 @@
 import { afterAll, describe, expect, it } from "vitest";
-import { prisma } from "../../lib/prisma.js";
-import * as pool from "../../lib/game-logic/pool.js";
-import { PoolExhaustedError } from "../../lib/game-logic/errors.js";
-import { createTestRoom, seedTestCards, utcDate } from "../helpers.js";
+import { prisma } from "../../lib/prisma";
+import * as pool from "../../lib/game-logic/pool";
+import { PoolExhaustedError } from "../../lib/game-logic/errors";
+import { createTestRoom, seedTestCards, utcDate } from "../helpers";
 
 const DAY = utcDate("2024-01-01");
 

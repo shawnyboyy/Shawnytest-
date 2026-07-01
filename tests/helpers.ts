@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
-import { prisma } from "../lib/prisma.js";
-import * as repo from "../lib/game-logic/repository.js";
-import type { CardLevel } from "../lib/game-logic/types.js";
+import { prisma } from "../lib/prisma";
+import * as repo from "../lib/game-logic/repository";
+import type { CardLevel } from "../lib/game-logic/types";
 
 export async function createTestRoom(overrides: { timezone?: string; currentLevel?: CardLevel } = {}) {
   return prisma.room.create({

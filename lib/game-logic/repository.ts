@@ -1,5 +1,5 @@
-import { prisma } from "../prisma.js";
-import type { CardLevel, Partner, PoolCardStatus } from "./types.js";
+import { prisma } from "../prisma";
+import type { CardLevel, Partner, PoolCardStatus } from "./types";
 
 export type Repo = typeof prisma;
 
@@ -44,6 +44,16 @@ export async function countAvailableInPool(roomId: string, pool: CardLevel): Pro
   return prisma.poolCard.count({
     where: { roomId, pool, status: "AVAILABLE" },
   });
+}
+
+const ALL_LEVELS: CardLevel[] = ["WARMUP", "REAL_TALK", "GO_DEEP", "CURVEBALL"];
+
+export async function getPoolCounts(roomId: string): Promise<Record<CardLevel, number>> {
+  const counts = await Promise.all(ALL_LEVELS.map((level) => countAvailableInPool(roomId, level)));
+  return Object.fromEntries(ALL_LEVELS.map((level, i) => [level, counts[i]])) as Record<
+    CardLevel,
+    number
+  >;
 }
 
 /** Cards still in play for a pool: either undrawn or drawn-but-not-yet-resolved. */
@@ -97,7 +107,7 @@ export async function findDrawnCard(
     where: {
       roomId_playDate_partner_pool: { roomId, playDate, partner, pool },
     },
-    include: { card: true },
+    include: { card: true, decisionLog: true },
   });
 }
 

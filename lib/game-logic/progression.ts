@@ -1,5 +1,5 @@
-import * as repo from "./repository.js";
-import type { CardLevel } from "./types.js";
+import * as repo from "./repository";
+import type { CardLevel } from "./types";
 
 const LEVEL_ORDER: CardLevel[] = ["WARMUP", "REAL_TALK", "GO_DEEP"];
 
